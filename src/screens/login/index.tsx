@@ -1,20 +1,31 @@
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, useWindowDimensions } from "react-native";
 import React, { useState } from "react";
 import { Button, Input } from "@rneui/base";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { NavegacaoPrincipalParams } from "../../navigation";
 
 export default function LoginScreen() {
+  // Hooks
   const [erro, setErro] = useState<null | string>(null);
 
-  //Funções
+  // Constantes 
+
+  /** Constante para ajustar o input e dimensionar corretamente a tela */
+  const windowHeight = useWindowDimensions().height;
+
+  type navProps = StackNavigationProp<NavegacaoPrincipalParams, "login">;
+  const navigate = useNavigation<navProps>();
+
+  // Funções
 
   /** Função de logar do Fã do Guga */
   const logar = async ({ user, password }: any) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    if (user.trim() == "Fã do Gugas" && password == "soufan")
-      console.log("oiii");
+    if (user.trim() == "Fan do Gugas" && password == "soufan")
+      navigate.navigate('home', {user: 'Fanzasso!'})
     else setErro("Email ou senha incorreta!");
   };
 
@@ -37,7 +48,7 @@ export default function LoginScreen() {
         isSubmitting,
         touched,
       }) => (
-        <>
+        <View style={[styles.mainContainer  , {minHeight: Math.round(windowHeight)}]}>
           <Text style={styles.title}>Fã Clube Do Gugas</Text>
           <View>
             <View style={styles.inputContainer}>
@@ -76,7 +87,7 @@ export default function LoginScreen() {
               )}
             </View>
           </View>
-        </>
+        </View>
       )}
     </Formik>
   );
@@ -119,4 +130,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
+  mainContainer: {
+    flex: 1,
+    backgroundColor: "#112",
+    justifyContent: "center",
+  }
 });
