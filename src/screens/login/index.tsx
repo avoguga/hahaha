@@ -6,11 +6,12 @@ import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavegacaoPrincipalParams } from "../../navigation";
+import { Audio } from 'expo-av';
 
 export default function LoginScreen() {
   // Hooks
   const [erro, setErro] = useState<null | string>(null);
-
+  const [sound, setSound] = React.useState();
   // Constantes 
 
   /** Constante para ajustar o input e dimensionar corretamente a tela */
@@ -21,11 +22,26 @@ export default function LoginScreen() {
 
   // Funções
 
+  /** Função de ESSENCIAL do Fã do Guga */
+  async function playSound() {
+    console.log('Loading Sound');
+    const { sound } = await Audio.Sound.createAsync(
+       require('../../assets/sounds/mexico.mp3')
+    );
+    // @ts-ignore
+    setSound(sound);
+
+    console.log('Playing Sound');
+    await sound.playAsync(); 
+  }
+
   /** Função de logar do Fã do Guga */
   const logar = async ({ user, password }: any) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    if (user.trim() == "Fan do Gugas" && password == "soufan")
-      navigate.navigate('home', {user: 'Fanzasso!'})
+    if (user.trim() == "Fan do Gugas" && password == "soufan"){
+      playSound();
+      navigate.navigate('home', {user: 'Fanzasso!'});
+    }
     else setErro("Email ou senha incorreta!");
   };
 
