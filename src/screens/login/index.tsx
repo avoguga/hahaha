@@ -6,12 +6,11 @@ import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavegacaoPrincipalParams } from "../../navigation";
-import { Audio } from 'expo-av';
 
 export default function LoginScreen() {
   // Hooks
   const [erro, setErro] = useState<null | string>(null);
-  const [sound, setSound] = React.useState();
+
   // Constantes 
 
   /** Constante para ajustar o input e dimensionar corretamente a tela */
@@ -22,24 +21,10 @@ export default function LoginScreen() {
 
   // Funções
 
-  /** Função de ESSENCIAL do Fã do Guga */
-  async function playSound() {
-    console.log('Loading Sound');
-    const { sound } = await Audio.Sound.createAsync(
-       require('../../assets/sounds/mexico.mp3')
-    );
-    // @ts-ignore
-    setSound(sound);
-
-    console.log('Playing Sound');
-    await sound.playAsync(); 
-  }
-
   /** Função de logar do Fã do Guga */
   const logar = async ({ user, password }: any) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     if (user.trim() == "Fan do Gugas" && password == "soufan"){
-      playSound();
       navigate.navigate('home', {user: 'Fanzasso!'});
     }
     else setErro("Email ou senha incorreta!");
@@ -52,7 +37,7 @@ export default function LoginScreen() {
         user: Yup.string().required("Informe o user fazendo o favor!"),
         password: Yup.string()
           .required("Digite a senha")
-          .min(6, "Só aceito acima de 8 caracteres meu bom!"),
+          .min(6, "Só aceito no minimo 6 caracteres meu bom!"),
       })}
       onSubmit={logar}
     >
@@ -113,11 +98,11 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 50,
     marginBottom: 100,
-    alignItems: "center",
+    width: 400,
+    alignItems: "center"
   },
   input: {
     backgroundColor: "#fff",
-    width: 100,
     borderRadius: 10,
     padding: 10,
     fontSize: 25,
@@ -126,7 +111,6 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: "#790808",
     fontWeight: "bold",
-    marginLeft: 30,
   },
   button: {
     width: 250,
@@ -148,6 +132,7 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
+    alignItems: "center",
     backgroundColor: "#112",
     justifyContent: "center",
   }

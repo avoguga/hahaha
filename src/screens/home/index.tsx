@@ -1,38 +1,81 @@
-import { View, Text, StyleSheet, Animated } from "react-native";
-import { Image } from "@rneui/base";
-import Gugas from "../../assets/imgs/gugas.jpg";
+import { View, Text, StyleSheet } from "react-native";
+import { Button } from "@rneui/base";
+import { Audio } from "expo-av";
 
-import React, { useEffect, useRef } from "react";
+import React from "react";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import { NavegacaoPrincipalParams } from "../../navigation";
 
 const Home = ({ route }) => {
   // Params do navigate
   const { user } = route.params;
 
-  // Hooks
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  /** TODO
+   * 
+   * Da para criar um arquivo CONSTANTS.TS para colocar essas contantes do navigate.
+   */
 
-  useEffect(() => {
-    return Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 10000,
-      useNativeDriver: false,
-    }).start();
-  }, [fadeAnim]);
+  // Constantes do nav
+  type navProps = StackNavigationProp<NavegacaoPrincipalParams, "login">;
+  const navigate = useNavigation<navProps>();
+
+
+  // Hooks
+  const [sound, setSound] = React.useState();
+
+  /** Função de ESSENCIAL do Fã do Guga */
+  async function playSoundAndNavigate() {
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../../assets/sounds/mexico.mp3")
+    );
+    // @ts-ignore
+    setSound(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync();
+    navigate.navigate('gugas', {user: 'Fanzasso!'});
+  }
 
   return (
     <View style={styles.mainContainer}>
-      <Animated.Text
+      <Text
         style={{
-          fontSize: 40,
+          fontSize: 45,
           color: "#790808",
           fontWeight: "bold",
-          marginLeft: 30,
-          opacity: fadeAnim
+          textAlign: "center",
         }}
       >
-        Parabéns por ser um! {user}!
-      </Animated.Text>
-      <Animated.Image source={Gugas} style={[styles.gugasImage, {opacity: fadeAnim}]} />
+        Parabéns por ser um {user}!
+      </Text>
+      <Text
+        style={{
+          fontSize: 45,
+          color: "#ffe23c",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        Gustavo agradece!
+      </Text>
+      <Text
+        style={{
+          fontSize: 30,
+          color: "#fff",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        Se estiver preparado aperte no botão!
+      </Text>
+      <Button
+        buttonStyle={styles.button}
+        titleStyle={{ fontSize: 30 }}
+        title={"Dale daleeee"}
+        onPress={playSoundAndNavigate}
+      />
     </View>
   );
 };
@@ -42,10 +85,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#112",
     justifyContent: "center",
+    alignItems: "center",
   },
-  gugasImage: {
-    width: 400,
-    height: 400,
+  button: {
+    width: 250,
+    backgroundColor: "black",
+    borderRadius: 30,
+    justifyContent: "center",
+    marginTop: 20,
+    borderWidth: 2,
+    borderColor: "red",
   },
 });
 
