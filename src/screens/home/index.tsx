@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Button } from "@rneui/base";
 import { Audio } from "expo-av";
-
 import React from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
@@ -17,12 +16,13 @@ const Home = ({ route }) => {
    */
 
   // Constantes do nav
-  type navProps = StackNavigationProp<NavegacaoPrincipalParams, "login">;
+  type navProps = StackNavigationProp<NavegacaoPrincipalParams, "home">;
   const navigate = useNavigation<navProps>();
 
 
   // Hooks
   const [sound, setSound] = React.useState();
+  const [changeButtonTitle, setChangeButtonTitle] = React.useState("Esse botão aparentemente não faz nada!");
 
   /** Função de ESSENCIAL do Fã do Guga */
   async function playSoundAndNavigate() {
@@ -35,7 +35,14 @@ const Home = ({ route }) => {
 
     console.log("Playing Sound");
     await sound.playAsync();
+    setChangeButtonTitle("Stop nas músicas!")
     navigate.navigate('gugas', {user: 'Fanzasso!'});
+  }
+
+  async function stopSound() {
+    console.log("Stoping Sound");
+    // @ts-ignore
+    await sound.stopAsync();
   }
 
   return (
@@ -75,6 +82,12 @@ const Home = ({ route }) => {
         titleStyle={{ fontSize: 30 }}
         title={"Dale daleeee"}
         onPress={playSoundAndNavigate}
+      />
+       <Button
+        buttonStyle={styles.button}
+        titleStyle={{ fontSize: 30 }}
+        title={changeButtonTitle}
+        onPress={stopSound}
       />
     </View>
   );
