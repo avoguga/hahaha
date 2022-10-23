@@ -3,17 +3,12 @@ import { Button } from "@rneui/base";
 import Gugas from "../../assets/imgs/gugas.jpg";
 import React, { useEffect, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { NavegacaoPrincipalParams } from "../../navigation";
-import { Audio } from "expo-av";
 
-const Guguinha = ({ route }) => {
+const Guguinha = () => {
   // Params do navigate
-  const { user } = route.params;
 
   //Constantes
-  type navProp = StackNavigationProp<NavegacaoPrincipalParams, 'gugas'>;
-  const nav = useNavigation<navProp>();
+  const nav = useNavigation<any>();
 
   // Hooks
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -43,7 +38,7 @@ const Guguinha = ({ route }) => {
           opacity: fadeAnim
         }}
       >
-        Parabéns por ser um! {user}!
+        Parabéns por ser um! Super fã!
       </Animated.Text>
       <Animated.Image source={Gugas} style={[styles.gugasImage, {opacity: fadeAnim}]} />
       <Button

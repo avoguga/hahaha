@@ -2,22 +2,12 @@ import { View, Text, StyleSheet } from "react-native";
 import { Button } from "@rneui/base";
 import { Audio } from "expo-av";
 import React from "react";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
-import { NavegacaoPrincipalParams } from "../../navigation";
 
-const Home = ({ route }) => {
-  // Params do navigate
-  const { user } = route.params;
-
-  /** TODO
-   * 
-   * Da para criar um arquivo CONSTANTS.TS para colocar essas contantes do navigate.
-   */
+const Home = () => {
 
   // Constantes do nav
-  type navProps = StackNavigationProp<NavegacaoPrincipalParams, "home">;
-  const navigate = useNavigation<navProps>();
+  const navigate = useNavigation<any>();
 
 
   // Hooks
@@ -36,7 +26,7 @@ const Home = ({ route }) => {
     console.log("Playing Sound");
     await sound.playAsync();
     setChangeButtonTitle("Stop nas músicas!")
-    navigate.navigate('gugas', {user: 'Fanzasso!'});
+    navigate.navigate('gugas');
   }
 
   async function stopSound() {
@@ -55,7 +45,7 @@ const Home = ({ route }) => {
           textAlign: "center",
         }}
       >
-        Parabéns por ser um {user}!
+        Parabéns por ser um Super Fã!!
       </Text>
       <Text
         style={{
