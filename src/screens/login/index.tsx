@@ -4,8 +4,6 @@ import { Button, Input } from "@rneui/base";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { NavegacaoPrincipalParams } from "../../navigation";
 
 export default function LoginScreen() {
   // Hooks
@@ -16,8 +14,7 @@ export default function LoginScreen() {
   /** Constante para ajustar o input e dimensionar corretamente a tela */
   const windowHeight = useWindowDimensions().height;
 
-  type navProps = StackNavigationProp<NavegacaoPrincipalParams, "login">;
-  const navigate = useNavigation<navProps>();
+  const navigate = useNavigation<any>();
 
   // Funções
 
@@ -25,7 +22,7 @@ export default function LoginScreen() {
   const logar = async ({ user, password }: any) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     if (user.trim() == "Fan do Gugas" && password == "soufan"){
-      navigate.navigate('home', {user: 'Fanzasso!'});
+      navigate.navigate('home');
     }
     else setErro("Email ou senha incorreta!");
   };

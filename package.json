@@ -20,6 +20,7 @@
     "expo-status-bar": "~1.4.0",
     "expo-updates": "~0.14.5",
     "formik": "^2.2.9",
+    "pensador-api": "^1.0.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-native": "0.69.5",

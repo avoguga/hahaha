@@ -1,18 +1,18 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Vibration } from "react-native";
 import { Button } from "@rneui/base";
 import { Audio } from "expo-av";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
 const Home = () => {
-
   // Constantes do nav
   const navigate = useNavigation<any>();
 
-
   // Hooks
   const [sound, setSound] = React.useState();
-  const [changeButtonTitle, setChangeButtonTitle] = React.useState("Esse botão aparentemente não faz nada!");
+  const [changeButtonTitle, setChangeButtonTitle] = React.useState(
+    "Esse botão aparentemente não faz nada!"
+  );
 
   /** Função de ESSENCIAL do Fã do Guga */
   async function playSoundAndNavigate() {
@@ -22,17 +22,22 @@ const Home = () => {
     );
     // @ts-ignore
     setSound(sound);
-
+    Vibration.vibrate(20 * 1000, true)
     console.log("Playing Sound");
     await sound.playAsync();
-    setChangeButtonTitle("Stop nas músicas!")
-    navigate.navigate('gugas');
+    setChangeButtonTitle("Stop nas músicas!");
+    navigate.navigate("gugas");
   }
 
   async function stopSound() {
     console.log("Stoping Sound");
+    Vibration.cancel()
     // @ts-ignore
     await sound.stopAsync();
+  }
+
+  const gugasQuotesList = () => {
+    navigate.navigate("quotes");
   }
 
   return (
@@ -57,7 +62,7 @@ const Home = () => {
       >
         Gustavo agradece!
       </Text>
-      <Text
+      {/* <Text
         style={{
           fontSize: 30,
           color: "#fff",
@@ -66,15 +71,21 @@ const Home = () => {
         }}
       >
         Se estiver preparado aperte no botão!
-      </Text>
+      </Text> */}
       <Button
         buttonStyle={styles.button}
         titleStyle={{ fontSize: 30 }}
         title={"Dale daleeee"}
         onPress={playSoundAndNavigate}
       />
-       <Button
+      <Button
         buttonStyle={styles.button}
+        titleStyle={{ fontSize: 30 }}
+        title={"Frases do Gugas (Em inglês...)"}
+        onPress={gugasQuotesList}
+      />
+      <Button
+        buttonStyle={styles.button} 
         titleStyle={{ fontSize: 30 }}
         title={changeButtonTitle}
         onPress={stopSound}
@@ -91,7 +102,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    width: 250,
+    width: 270,
     backgroundColor: "black",
     borderRadius: 30,
     justifyContent: "center",
