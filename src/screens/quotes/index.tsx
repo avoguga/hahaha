@@ -4,12 +4,6 @@ import Card from '../../components/Card';
 
 const url = "https://type.fit/api/quotes"; 
 
-const Item = ({ title }) => (
-  <View>
-    <Text>{title}</Text>
-  </View>
-);
-
 export default function Frases() {
   
   const [citacoes, setCitacoes] = useState<any>([]);
@@ -31,7 +25,7 @@ export default function Frases() {
   // console.log("oi" , citacoes.map((quotes => (quotes.text))))
 
   const renderItem = ({ item }) => (
-    <Card text={item.text}/>
+    <Card text={item.text} key={item.key}/>
   );
 
   return (

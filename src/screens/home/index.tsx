@@ -40,6 +40,10 @@ const Home = () => {
     navigate.navigate("quotes");
   }
 
+  const gugasPokemons = () => {
+    navigate.navigate("pokemon");
+  }
+
   return (
     <View style={styles.mainContainer}>
       <Text
@@ -83,6 +87,12 @@ const Home = () => {
         titleStyle={{ fontSize: 30 }}
         title={"Frases do Gugas (Em inglês...)"}
         onPress={gugasQuotesList}
+      />
+      <Button
+        buttonStyle={styles.button}
+        titleStyle={{ fontSize: 30 }}
+        title={"Pokemons que o Gugas capturou"}
+        onPress={gugasPokemons}
       />
       <Button
         buttonStyle={styles.button} 
