@@ -11,7 +11,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
 
-export default function LoginScreen() {
+export default function SignScreen() {
   // Hooks
   const [erro, setErro] = useState<null | string>(null);
 
@@ -58,12 +58,43 @@ export default function LoginScreen() {
           ]}
         >
           <Text style={styles.title}>Bem vindo ao Código Fácil!</Text>
-          <Text style={styles.text}>Logue na sua conta!</Text>
+          <Text style={styles.text}>Faça seu cadastro!</Text>
 
           <View>
             <View style={styles.inputContainer}>
               <Input
+                label="Primeiro Nome"
+                labelStyle={{ color: "white" }}
+                placeholder="Escreva seu primeiro nome"
+                style={styles.input}
+                onChangeText={handleChange("user")}
+              />
+              {touched.user && errors.user && (
+                <Text style={styles.error}>{errors.user}</Text>
+              )}
+              <Input
+                label="Sobrenome"
+                labelStyle={{ color: "white" }}
+                placeholder="Escreva seu sobrenome"
+                style={styles.input}
+                onChangeText={handleChange("user")}
+              />
+              {touched.user && errors.user && (
+                <Text style={styles.error}>{errors.user}</Text>
+              )}
+              <Input
+                label="Email"
+                labelStyle={{ color: "white" }}
+                placeholder="Escreva aqui seu email"
+                style={styles.input}
+                onChangeText={handleChange("user")}
+              />
+              {touched.user && errors.user && (
+                <Text style={styles.error}>{errors.user}</Text>
+              )}
+              <Input
                 label="Usuário"
+                labelStyle={{ color: "white" }}
                 placeholder="Escreva aqui seu usuário"
                 style={styles.input}
                 onChangeText={handleChange("user")}
@@ -73,6 +104,7 @@ export default function LoginScreen() {
               )}
               <Input
                 label="Senha"
+                labelStyle={{ color: "white" }}
                 placeholder="Escreva aqui sua senha"
                 secureTextEntry
                 style={styles.input}
@@ -91,8 +123,8 @@ export default function LoginScreen() {
                 <Button
                   buttonStyle={styles.button}
                   titleStyle={{ fontSize: 25, color: "#493d8a" }}
-                  title="Login"
-                  onPress={() => handleSubmit()}
+                  title="Criar conta"
+                  onPress={() => alert("Conta criada!")}
                 />
               )}
               <View
@@ -102,13 +134,13 @@ export default function LoginScreen() {
                   justifyContent: "center",
                 }}
               >
-                <Text style={styles.textSingIn}>Não tem uma conta? </Text>
+                <Text style={styles.textSingIn}>Já tem conta? </Text>
                 <Button
-                  buttonStyle={[styles.signButton, { marginTop: 28 }]}
+                  buttonStyle={[{ marginTop: 28 }]}
                   type="clear"
                   titleStyle={{ fontSize: 20, color: "white" }}
-                  title="Cadastre-se!"
-                  onPress={() => navigate.navigate("sign")}
+                  title="Faça o login!"
+                  onPress={() => navigate.navigate("login")}
                 />
               </View>
             </View>
@@ -121,8 +153,6 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   inputContainer: {
-    marginTop: 50,
-    marginBottom: 100,
     width: 400,
     alignItems: "center",
   },
@@ -130,17 +160,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 10,
-    fontSize: 25,
+    fontSize: 18,
+    height: 50,
   },
   title: {
     fontSize: 27,
     color: "#fff",
     fontWeight: "bold",
+    marginTop: 70,
   },
   text: {
     fontSize: 24,
     color: "#fff",
     marginTop: 30,
+    marginBottom: 20
   },
   textSingIn: {
     fontSize: 20,
@@ -152,7 +185,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
   },
-  signButton: {},
   error: {
     color: "white",
     fontSize: 15,
