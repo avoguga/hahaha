@@ -10,6 +10,10 @@ import { Button, Input } from "@rneui/base";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { app } from "../../../config";
+
+const auth = getAuth(app);
 
 export default function LoginScreen() {
   // Hooks
@@ -25,18 +29,20 @@ export default function LoginScreen() {
   // Funções
 
   /** Função de logar do Fã do Guga */
-  const logar = async ({ user, password }: any) => {
+  const logar = async ({ email, password }: any) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    if (user.trim() == "aaa" && password == "aaaaaa") {
-      navigate.navigate("home");
-    } else setErro("Email ou senha incorreta!");
+    signInWithEmailAndPassword(auth, email, password).then(
+      logado => navigate.navigate("home")
+    ).catch(error => (setErro("Email ou senha inválidos!")))
   };
 
   return (
     <Formik
-      initialValues={{ user: "", password: "" }}
+      initialValues={{ email: "", password: "" }}
       validationSchema={Yup.object({
-        user: Yup.string().required("Informe o user fazendo o favor!"),
+        email: Yup.string()
+          .required("Informe o email fazendo o favor!")
+          .email("O Email deve ser válido!"),
         password: Yup.string()
           .required("Digite a senha")
           .min(6, "Só aceito no minimo 6 caracteres meu bom!"),
@@ -57,19 +63,19 @@ export default function LoginScreen() {
             { minHeight: Math.round(windowHeight) },
           ]}
         >
-          <Text style={styles.title}>Bem vindo ao Código Fácil!</Text>
+          <Text style={styles.title}>Bem-vindo ao Código Fácil!</Text>
           <Text style={styles.text}>Logue na sua conta!</Text>
 
           <View>
             <View style={styles.inputContainer}>
               <Input
-                label="Usuário"
-                placeholder="Escreva aqui seu usuário"
+                label="E-mail"
+                placeholder="Escreva aqui seu e-mail"
                 style={styles.input}
-                onChangeText={handleChange("user")}
+                onChangeText={handleChange("email")}
               />
-              {touched.user && errors.user && (
-                <Text style={styles.error}>{errors.user}</Text>
+              {touched.email && errors.email && (
+                <Text style={styles.error}>{errors.email}</Text>
               )}
               <Input
                 label="Senha"

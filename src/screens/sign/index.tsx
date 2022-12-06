@@ -10,6 +10,10 @@ import { Button, Input } from "@rneui/base";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { app } from "../../../config";
+import { doc, getFirestore, setDoc, collection } from "firebase/firestore";
+const auth = getAuth(app);
 
 export default function SignScreen() {
   // Hooks
@@ -17,31 +21,56 @@ export default function SignScreen() {
 
   // Constantes
 
-  /** Constante para ajustar o input e dimensionar corretamente a tela */
-  const windowHeight = useWindowDimensions().height;
-
   const navigate = useNavigation<any>();
 
   // Funções
 
+  const db = getFirestore();
+  const document = doc(collection(db, "usuarios"));
+  const setUser = (usuario, senha, email, nome, sobrenome) => {
+    setDoc(document, {
+      id: document.id,
+      usuario: usuario,
+      senha: senha,
+      email: email,
+      nome: nome,
+      sobrenome: sobrenome,
+    });
+  };
+
   /** Função de logar do Fã do Guga */
-  const logar = async ({ user, password }: any) => {
+  const sign = async ({ user, password, email, name, lastname }: any) => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    if (user.trim() == "aaa" && password == "aaaaaa") {
-      navigate.navigate("home");
-    } else setErro("Email ou senha incorreta!");
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((result) => {
+        setUser(user, password, email, name, lastname);
+        console.log("User criado!");
+      })
+      .catch((error) => console.log(error));
+    navigate.navigate("login");
   };
 
   return (
     <Formik
-      initialValues={{ user: "", password: "" }}
+      initialValues={{
+        user: "",
+        password: "",
+        email: "",
+        name: "",
+        lastname: "",
+      }}
       validationSchema={Yup.object({
         user: Yup.string().required("Informe o user fazendo o favor!"),
         password: Yup.string()
-          .required("Digite a senha")
+          .required("Digite a senha!")
           .min(6, "Só aceito no minimo 6 caracteres meu bom!"),
+        email: Yup.string()
+          .required("Digite o E-mail!")
+          .email("O e-mail deve ser valido!"),
+        name: Yup.string().required("Digite seu nome!"),
+        lastname: Yup.string().required("Digite seu sobrenome!"),
       })}
-      onSubmit={logar}
+      onSubmit={sign}
     >
       {({
         errors,
@@ -51,12 +80,7 @@ export default function SignScreen() {
         isSubmitting,
         touched,
       }) => (
-        <View
-          style={[
-            styles.mainContainer,
-            { minHeight: Math.round(windowHeight) },
-          ]}
-        >
+        <View style={[styles.mainContainer]}>
           <Text style={styles.title}>Bem vindo ao Código Fácil!</Text>
           <Text style={styles.text}>Faça seu cadastro!</Text>
 
@@ -67,30 +91,30 @@ export default function SignScreen() {
                 labelStyle={{ color: "white" }}
                 placeholder="Escreva seu primeiro nome"
                 style={styles.input}
-                onChangeText={handleChange("user")}
+                onChangeText={handleChange("name")}
               />
-              {touched.user && errors.user && (
-                <Text style={styles.error}>{errors.user}</Text>
+              {touched.name && errors.name && (
+                <Text style={styles.error}>{errors.name}</Text>
               )}
               <Input
                 label="Sobrenome"
                 labelStyle={{ color: "white" }}
                 placeholder="Escreva seu sobrenome"
                 style={styles.input}
-                onChangeText={handleChange("user")}
+                onChangeText={handleChange("lastname")}
               />
-              {touched.user && errors.user && (
-                <Text style={styles.error}>{errors.user}</Text>
+              {touched.lastname && errors.lastname && (
+                <Text style={styles.error}>{errors.lastname}</Text>
               )}
               <Input
-                label="Email"
+                label="E-mail"
                 labelStyle={{ color: "white" }}
-                placeholder="Escreva aqui seu email"
+                placeholder="Escreva aqui seu e-mail"
                 style={styles.input}
-                onChangeText={handleChange("user")}
+                onChangeText={handleChange("email")}
               />
-              {touched.user && errors.user && (
-                <Text style={styles.error}>{errors.user}</Text>
+              {touched.email && errors.email && (
+                <Text style={styles.error}>{errors.email}</Text>
               )}
               <Input
                 label="Usuário"
@@ -124,7 +148,7 @@ export default function SignScreen() {
                   buttonStyle={styles.button}
                   titleStyle={{ fontSize: 25, color: "#493d8a" }}
                   title="Criar conta"
-                  onPress={() => alert("Conta criada!")}
+                  onPress={() => handleSubmit()}
                 />
               )}
               <View
@@ -161,19 +185,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     fontSize: 18,
-    height: 50,
+    height: 40,
   },
   title: {
     fontSize: 27,
     color: "#fff",
     fontWeight: "bold",
-    marginTop: 70,
+    marginTop: 50,
   },
   text: {
     fontSize: 24,
     color: "#fff",
     marginTop: 30,
-    marginBottom: 20
+    marginBottom: 20,
   },
   textSingIn: {
     fontSize: 20,

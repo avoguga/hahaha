@@ -1,18 +1,24 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-export default function Card({text}) {
+interface ICard {
+  text: String,
+  img: any,
+  onClick?: any 
+}
+
+export default function Card({text, img, onClick }: ICard) {
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={onClick}>
+        <Image style={styles.cardImg} source={img}/>
         <Text style={[styles.cardText]}>{text}</Text>
-        {/* <Text style={styles.cardText}>{date}</Text> */}
-    </View>
+    </TouchableOpacity>
   )
 }
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#FFF",
+        backgroundColor: "#493d8a",
         width: 370,
         height: 70,
         borderRadius: 15,
@@ -22,7 +28,11 @@ const styles = StyleSheet.create({
         alignItems: "center"
       },
       cardText: {
-          color: "#444140",
-          fontSize: 16
-      }
+          color: "#fff",
+          fontSize: 20,  
+      },
+      cardImg: {
+        aspectRatio: 1,
+        width: 50,
+    }
   });
