@@ -4,27 +4,46 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
+
+import {
+  CardNumberTextInput,
+  CardDateTextInput,
+} from "rn-credit-card-textinput";
+
 import { Button, Input } from "@rneui/base";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/themed";
 import BuyCard from "../../components/BuyCard";
+import { Modalize } from "react-native-modalize";
 
 const Cart = ({ route }) => {
+  const [cardValue, setCardValue] = useState("");
+  const [focusCardNum, setFocusCardNum] = useState<boolean>(false);
+
+  const [cardDateValue, setCardDateValue] = useState("");
+  const [focusCardDateNum, setFocusCardDateNum] = useState<boolean>(false);
+
+  const updateText = (cardNum: string) => {
+    setCardValue(cardNum);
+  };
+  const updateCardDate = (cardNum: string) => {
+    setCardDateValue(cardNum);
+  };
+
   // Constantes do nav
   const navigate = useNavigation<any>();
-  const [paymentIsDisable, setPaymentIsDisable] = useState(false);
-  const [publishedKey, setPublishedKey] = useState("");
-  const [erro, setErro] = useState<null | string>(null);
-
+  const modal = useRef<Modalize>();
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.headerContainer}>
+      {/* <View style={styles.headerContainer}>
         <View style={styles.titleView}>
           <Text style={styles.title}>Checkout</Text>
         </View>
-      </View>
+      </View> */}
       <ScrollView
         style={styles.contentContainer}
         contentContainerStyle={{
@@ -36,8 +55,91 @@ const Cart = ({ route }) => {
           text={route.params?.cartElements?.title}
           price={route.params?.cartElements?.price}
           img={route.params?.cartElements?.img}
+          description={route.params?.cartElements?.description}
+          type={route.params?.cartElements?.type}
         />
-      
+        <Button
+          buttonStyle={[styles.button]}
+          type="clear"
+          titleStyle={{ fontSize: 20, color: "#fff" }}
+          title="Comprar agora!"
+          onPress={() => modal.current?.open()}
+        />
+        <Modalize ref={modal} modalStyle={{ padding: 20 }} modalHeight={400}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{
+              width: "90%",
+            }}
+          >
+            <CardNumberTextInput
+              autoFocus={true}
+              focus={focusCardNum}
+              onFocus={() => setFocusCardNum(true)}
+              onBlur={(e) => {
+                setFocusCardNum(false);
+              }}
+              label="Número do cartão"
+              errorColor={"red"}
+              defaultBorderColor={"#ddd"}
+              inputWrapStyle={{
+                width: "100%",
+                height: 60,
+              }}
+              inputStyle={{
+                color: "#333",
+              }}
+              defaultValue={cardValue}
+              focusColor={"blue"}
+              placeholder={"Cartão de crédito"}
+              updateTextVal={(text) => {
+                updateText(text);
+              }}
+            />
+
+            <CardDateTextInput
+              errorColor={"red"}
+              labelColor={"#ddd"}
+              focusColor={"#1c32a0"}
+              defaultBorderColor={"#ddd"}
+              placeholder={"MM/YY"}
+              label={"Validade"}
+              focus={focusCardDateNum}
+              updateCardDateText={(t) => {
+                updateCardDate(t);
+              }}
+              onFocus={() => setFocusCardDateNum(true)}
+              labelStyle={{
+                color: "#333",
+                fontWeight: "400",
+              }}
+              inputWrapStyle={{
+                borderRadius: 10,
+                borderWidth: 1,
+              }}
+              placeholderTextColor={"#ccc"}
+              value={cardDateValue}
+              defaultValue={cardDateValue}
+              inputStyle={{
+                color: "#333",
+                fontWeight: "bold",
+              }}
+            />
+            <Input
+              label="Nome"
+              labelStyle={{ fontWeight: "400", fontSize: 14, color: "#000" }}
+              containerStyle={{
+                borderWidth: 1,
+                borderColor: "#000",
+                borderRadius: 20
+              }}
+              inputContainerStyle={{
+                borderBottomWidth: 0,
+                backgroundColor: "transparent"
+              }}
+            />
+          </KeyboardAvoidingView>
+        </Modalize>
       </ScrollView>
     </View>
   );
@@ -103,8 +205,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   contentContainer: {
-    flex: 0.8,
+    flex: 1,
     backgroundColor: "#fff",
+    marginTop: 30,
   },
   title: {
     color: "#fff",
@@ -121,7 +224,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: 270,
-    backgroundColor: "#fff",
+    backgroundColor: "#493d8a",
     borderRadius: 30,
     justifyContent: "center",
     marginTop: 20,

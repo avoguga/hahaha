@@ -2,7 +2,8 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { Button } from "@rneui/base";
 import { useNavigation } from "@react-navigation/native";
-
+import { Icon } from "@rneui/themed";
+import { AirbnbRating } from '@rneui/themed';
 interface ICard {
   text: String;
   onClick?: any;
@@ -21,18 +22,26 @@ export default function BuyCard({
   img,
 }: ICard) {
   const navigate = useNavigation<any>();
-
+  const ratingCompleted = (rating: number) => {
+    console.log('Rating is: ' + rating);
+  };
   return (
     <View style={styles.card}>
-      <Text style={[styles.cardTitle]}>{text}</Text>
-      <Text style={[styles.cardText]}>Preço: R$ {price}</Text>
       <Image
         style={styles.cardImg}
         source={{
           uri: img,
         }}
       />
-     
+      <Text style={[styles.cardTitle]}>{text}</Text>
+      <View style={{ flexDirection: "row" }}>
+        <AirbnbRating />
+        <Text style={{ color: "#fff", marginLeft: 30 }}>8 Reviews</Text>
+      </View>
+      <Text style={[styles.cardText, {marginTop: 20}]}>Preço: R$ {price}</Text>
+
+      <Text style={[styles.cardText]}>Descrição: {description}</Text>
+      <Text style={[styles.cardText]}>Tipo do template: {type}</Text>
     </View>
   );
 }
@@ -50,10 +59,11 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#493d8a",
     width: 420,
-    height: 450,
+    height: 500,
     margin: 10,
     alignItems: "baseline",
     padding: 10,
+    paddingLeft: 20,
   },
   cardTitle: {
     color: "#fff",
@@ -68,8 +78,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   cardImg: {
-    aspectRatio: 1,
-    width: 400,
-    resizeMode: "contain",
+    width: 370,
+    height: 200,
+    resizeMode: "stretch",
   },
 });
