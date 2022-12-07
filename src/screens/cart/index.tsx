@@ -86,7 +86,9 @@ const Cart = ({ route }) => {
     }, 1000);
     const templateParams = {
       email: email,
-      name: userName
+      name: userName,
+      template: route.params?.cartElements?.title,
+      price: route.params?.cartElements?.price
   };
     emailjs.send(
       "service_cycmc4n",

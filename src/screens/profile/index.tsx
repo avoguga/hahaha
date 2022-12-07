@@ -56,7 +56,11 @@ const Profile = () => {
       usuario: usuario,
       email: email
     })
-  
+  }
+
+  const signOut = () => {
+    auth.signOut();
+    navigate.navigate("login");
   }
   
   return (
@@ -68,8 +72,10 @@ const Profile = () => {
           <Icon
             size={40}
             style={{ marginLeft: 20 }}
-            name="shopping-cart"
+            type="materialicon"
+            name="logout"
             color="white"
+            onPress={signOut}
           />
         </View>
       </View>
