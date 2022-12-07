@@ -28,14 +28,6 @@ function HomeTabs() {
         }}
       />
       <Tab.Screen
-        name="about"
-        component={About}
-        options={{
-          tabBarLabel: "Sobre",
-          tabBarIcon: () => <MaterialIcons name="info" size={20} />,
-        }}
-      />
-      <Tab.Screen
         name="aaa"
         component={Profile}
         options={{
