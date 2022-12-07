@@ -8,6 +8,8 @@ import {
   Platform,
 } from "react-native";
 
+import emailjs from "emailjs-com";
+
 import {
   CardNumberTextInput,
   CardDateTextInput,
@@ -16,16 +18,88 @@ import {
 import { Button, Input } from "@rneui/base";
 import React, { useState, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Icon } from "@rneui/themed";
+import { Icon, Dialog } from "@rneui/themed";
 import BuyCard from "../../components/BuyCard";
 import { Modalize } from "react-native-modalize";
+import { Formik } from "formik";
+import {
+  getFirestore,
+  getDocs,
+  collection,
+  query,
+  where,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { app } from "../../../config";
+
 
 const Cart = ({ route }) => {
   const [cardValue, setCardValue] = useState("");
   const [focusCardNum, setFocusCardNum] = useState<boolean>(false);
-
+  const [visible1, setVisible1] = useState(false);
+  const [visible2, setVisible2] = useState(false);
   const [cardDateValue, setCardDateValue] = useState("");
   const [focusCardDateNum, setFocusCardDateNum] = useState<boolean>(false);
+  const [user, setUser]: any = useState();
+  const [userName, setUserName]: any = useState();
+
+  const form: any = useRef(null);
+  const auth = getAuth(app);
+
+  const email = auth.currentUser?.email;
+
+  const db = getFirestore();
+  const colQuery = query(
+    collection(db, "usuarios"),
+    where("email", "==", email)
+  );
+
+  getDocs(colQuery).then((results) => {
+    const userResult: any[] = [];
+    results.forEach((result) => {
+      userResult.push(result.data());
+    });
+    setUser(userResult);
+  });
+
+  const userId =  async () => {
+    if(user){
+      const nome = await user[0]?.nome
+      return nome;
+    }
+  }
+
+  
+  const openModal = () => {
+    userId().then(
+      result => setUserName(result)
+    ),
+    modal.current?.open()
+  }
+
+  const toggleDialog1 = () => {
+    setVisible1(!visible1);
+    setTimeout(() => {
+      setVisible2(!visible2);
+    }, 1000);
+    const templateParams = {
+      email: email,
+      name: userName
+  };
+    emailjs.send(
+      "service_cycmc4n",
+      "template_z74f0zj",
+      templateParams,
+      "2nkFZvtFxcz_PH8GS"
+    );
+  };
+
+  const toggleDialog2 = () => {
+    setVisible1(!visible1);
+    setVisible2(!visible2);
+  };
 
   const updateText = (cardNum: string) => {
     setCardValue(cardNum);
@@ -63,81 +137,156 @@ const Cart = ({ route }) => {
           type="clear"
           titleStyle={{ fontSize: 20, color: "#fff" }}
           title="Comprar agora!"
-          onPress={() => modal.current?.open()}
+          onPress={() => openModal()}
         />
-        <Modalize ref={modal} modalStyle={{ padding: 20 }} modalHeight={400}>
+        <Modalize ref={modal} modalStyle={{ padding: 20 }} modalHeight={560}>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={{
               width: "90%",
             }}
           >
-            <CardNumberTextInput
-              autoFocus={true}
-              focus={focusCardNum}
-              onFocus={() => setFocusCardNum(true)}
-              onBlur={(e) => {
-                setFocusCardNum(false);
+            <Formik
+              initialValues={{
+                email: email,
               }}
-              label="Número do cartão"
-              errorColor={"red"}
-              defaultBorderColor={"#ddd"}
-              inputWrapStyle={{
-                width: "100%",
-                height: 60,
-              }}
-              inputStyle={{
-                color: "#333",
-              }}
-              defaultValue={cardValue}
-              focusColor={"blue"}
-              placeholder={"Cartão de crédito"}
-              updateTextVal={(text) => {
-                updateText(text);
-              }}
-            />
+              onSubmit={toggleDialog1}
+            >
+              {({ handleChange, handleBlur, handleSubmit }) => (
+                <View>
+                  <CardNumberTextInput
+                    autoFocus={true}
+                    focus={focusCardNum}
+                    onFocus={() => setFocusCardNum(true)}
+                    onBlur={(e) => {
+                      setFocusCardNum(false);
+                    }}
+                    label="Número do cartão"
+                    errorColor={"red"}
+                    defaultBorderColor={"#ddd"}
+                    inputWrapStyle={{
+                      width: "100%",
+                      height: 60,
+                      marginLeft: 10,
+                      marginBottom: -10,
+                    }}
+                    inputStyle={{
+                      color: "#333",
+                    }}
+                    defaultValue={cardValue}
+                    focusColor={"blue"}
+                    placeholder={"Cartão de crédito"}
+                    updateTextVal={(text) => {
+                      updateText(text);
+                    }}
+                  />
 
-            <CardDateTextInput
-              errorColor={"red"}
-              labelColor={"#ddd"}
-              focusColor={"#1c32a0"}
-              defaultBorderColor={"#ddd"}
-              placeholder={"MM/YY"}
-              label={"Validade"}
-              focus={focusCardDateNum}
-              updateCardDateText={(t) => {
-                updateCardDate(t);
-              }}
-              onFocus={() => setFocusCardDateNum(true)}
-              labelStyle={{
-                color: "#333",
-                fontWeight: "400",
-              }}
-              inputWrapStyle={{
-                borderRadius: 10,
-                borderWidth: 1,
-              }}
-              placeholderTextColor={"#ccc"}
-              value={cardDateValue}
-              defaultValue={cardDateValue}
-              inputStyle={{
-                color: "#333",
-                fontWeight: "bold",
-              }}
-            />
-            <Input
-              label="Nome"
-              labelStyle={{ fontWeight: "400", fontSize: 14, color: "#000" }}
-              containerStyle={{
-                borderWidth: 1,
-                borderColor: "#000",
-                borderRadius: 20
-              }}
-              inputContainerStyle={{
-                borderBottomWidth: 0,
-                backgroundColor: "transparent"
-              }}
-            />
+                  <CardDateTextInput
+                    errorColor={"red"}
+                    labelColor={"#ddd"}
+                    focusColor={"#1c32a0"}
+                    defaultBorderColor={"#ddd"}
+                    placeholder={"MM/YY"}
+                    label={"Validade"}
+                    focus={focusCardDateNum}
+                    updateCardDateText={(t) => {
+                      updateCardDate(t);
+                    }}
+                    onFocus={() => setFocusCardDateNum(true)}
+                    labelStyle={{
+                      color: "#333",
+                      fontWeight: "400",
+                    }}
+                    inputWrapStyle={{
+                      marginLeft: 10,
+                    }}
+                    placeholderTextColor={"#ccc"}
+                    value={cardDateValue}
+                    defaultValue={cardDateValue}
+                    inputStyle={{
+                      color: "#333",
+                      fontWeight: "bold",
+                    }}
+                  />
+                  <Input
+                    label="CVC"
+                    placeholder="CVC"
+                    placeholderTextColor={"#ccc"}
+                    labelStyle={{
+                      fontWeight: "400",
+                      fontSize: 14,
+                      color: "#000",
+                      marginBottom: 10,
+                    }}
+                    inputStyle={{
+                      borderWidth: 1,
+                      borderColor: "rgba(0, 0, 0, .1)",
+                      padding: 10,
+                    }}
+                    containerStyle={{
+                      width: 100,
+                    }}
+                    style={{ color: "#000" }}
+                    inputContainerStyle={{
+                      borderBottomWidth: 0,
+                      backgroundColor: "transparent",
+                    }}
+                  />
+                  <Input
+                    label="Nome do Titular"
+                    placeholder="Nome do titular do cartão"
+                    placeholderTextColor={"#ccc"}
+                    labelStyle={{
+                      fontWeight: "400",
+                      fontSize: 14,
+                      color: "#000",
+                      marginBottom: 10,
+                    }}
+                    inputStyle={{
+                      borderWidth: 1,
+                      borderColor: "rgba(0, 0, 0, .1)",
+                      padding: 10,
+                    }}
+                    style={{ color: "#000" }}
+                    inputContainerStyle={{
+                      borderBottomWidth: 0,
+                      backgroundColor: "transparent",
+                    }}
+                  />
+                  <Button
+                    buttonStyle={[styles.button, { marginLeft: 40 }]}
+                    type="clear"
+                    titleStyle={{ fontSize: 20, color: "#fff" }}
+                    title="Comprar agora!"
+                    onPress={() => handleSubmit()}
+                  />
+                  <Dialog
+                    isVisible={visible1}
+                    onBackdropPress={toggleDialog2}
+                    overlayStyle={{
+                      backgroundColor: "#493d8a",
+                    }}
+                  >
+                    {!visible2 ? (
+                      <Dialog.Loading />
+                    ) : (
+                      <View
+                        style={{
+                          height: 200,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          backgroundColor: "#493d8a",
+                        }}
+                      >
+                        <Text style={{ color: "#fff", fontSize: 20 }}>
+                          Compra realizada!
+                        </Text>
+                      </View>
+                    )}
+                  </Dialog>
+                </View>
+              )}
+            </Formik>
           </KeyboardAvoidingView>
         </Modalize>
       </ScrollView>

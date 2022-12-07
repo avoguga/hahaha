@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@rneui/base";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "@rneui/themed";
@@ -25,6 +25,7 @@ export default function BuyCard({
   const ratingCompleted = (rating: number) => {
     console.log('Rating is: ' + rating);
   };
+  const [a, setA] = useState(8)
   return (
     <View style={styles.card}>
       <Image
@@ -35,8 +36,8 @@ export default function BuyCard({
       />
       <Text style={[styles.cardTitle]}>{text}</Text>
       <View style={{ flexDirection: "row" }}>
-        <AirbnbRating />
-        <Text style={{ color: "#fff", marginLeft: 30 }}>8 Reviews</Text>
+        <AirbnbRating defaultRating={4} showRating={false} size={20} onFinishRating={() => {setA(9)}} />
+        <Text style={{ color: "#fff", marginLeft: 30 }}>{a} Reviews</Text>
       </View>
       <Text style={[styles.cardText, {marginTop: 20}]}>Preço: R$ {price}</Text>
 
